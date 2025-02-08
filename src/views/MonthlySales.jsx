@@ -33,25 +33,17 @@ function createData(date, totalSales) {
   return { date, totalSales };
 }
 
-export default function MonthlySales() {
-  const [rows, setRows] = React.useState([
-    createData("January 2025", 1200),
-    createData("February 2025", 1200),
-    createData("March 2025", 1200),
-    createData("April 2025", 1200),
-    createData("May 2025", 1200),
-    createData("June 2025", 1200),
-    createData("January 2024", 1200),
-    createData("February 2024", 1200),
-    createData("March 2024", 1200),
-    createData("April 2024", 1200),
-    createData("May 2024", 1200),
-    createData("June 2024", 1200),
-  ]);
+export default function MonthlySales({ monthly }) {
+  const [rows, setRows] = React.useState([]);
 
   const [year, setYear] = React.useState(String(new Date().getFullYear()));
   const [numDates, setNumDates] = React.useState(0);
   const [filteredRows, setFilteredRows] = React.useState([]);
+
+  React.useEffect(() => {
+    setRows(monthly);
+    console.log(monthly);
+  }, [monthly]);
 
   React.useEffect(() => {
     let newRows = rows;

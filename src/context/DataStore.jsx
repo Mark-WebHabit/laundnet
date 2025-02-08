@@ -14,6 +14,7 @@ function DataStore({ children }) {
   const [orderHistory, setOrderHistory] = useState([]);
   const [logistics, setLogistics] = useState([]);
   const [user, setUser] = useState(false);
+  const [weekly, setWeekly] = useState([]);
 
   // ref
   const servicesRef = ref(db, "services");
@@ -124,6 +125,48 @@ function DataStore({ children }) {
     setOrderHistory(history);
   }, [customers, orders]);
 
+  const groupByWeek = (data) => {
+    const getStartOfWeek = (dateStr) => {
+      const date = new Date(dateStr);
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+      const startOfWeek = new Date(date.setDate(diff));
+      return startOfWeek.toISOString().split("T")[0]; // Return date in YYYY-MM-DD format
+    };
+
+    const groupedData = data.reduce((acc, curr) => {
+      const startOfWeek = getStartOfWeek(curr.date);
+      if (!acc[startOfWeek]) {
+        acc[startOfWeek] = {
+          totalSales: 0,
+          numOrders: 0,
+          numDeliveredOrClaimed: 0,
+        };
+      }
+      if (curr.status === "Delivered" || curr.status === "Claimed") {
+        acc[startOfWeek].totalSales += curr.overAllTotal;
+        acc[startOfWeek].numDeliveredOrClaimed += 1;
+      }
+      acc[startOfWeek].numOrders += 1;
+      return acc;
+    }, {});
+
+    const currentWeekStart = getStartOfWeek(new Date().toISOString());
+
+    return Object.keys(groupedData).map((week) => ({
+      week_starting_on: week,
+      totalSales: groupedData[week].totalSales,
+      numOrders: groupedData[week].numOrders,
+      numDeliveredOrClaimed: groupedData[week].numDeliveredOrClaimed,
+      isCurrentWeek: week === currentWeekStart,
+    }));
+  };
+
+  useEffect(() => {
+    const week = groupByWeek(orders);
+    setWeekly(week);
+  }, [orders]);
+
   return (
     <DataContext.Provider
       value={{
@@ -136,6 +179,7 @@ function DataStore({ children }) {
         user,
         setUser,
         ordersRef,
+        weekly,
       }}
     >
       {children}

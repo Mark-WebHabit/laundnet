@@ -33,19 +33,19 @@ function createData(date, totalSales) {
   return { date, totalSales };
 }
 
-export default function YearlySales() {
-  const [rows, setRows] = React.useState([
-    createData("2025", 1200),
-    createData("2024", 1200),
-    createData("2023", 1200),
-    createData("2022", 1200),
-  ]);
+export default function YearlySales({ yearly }) {
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    setRows(yearly);
+    console.log(yearly);
+  }, [yearly]);
 
   const exportCSV = () => {
     const totalSales = rows.reduce((acc, row) => acc + row.totalSales, 0);
     const csvRows = [
-      ["Date", "Total Sales"],
-      ...rows.map((row) => [row.date, row.totalSales]),
+      ["Year", "Total Sales"],
+      ...rows.map((row) => [row.year, row.totalSales]),
       ["Total", totalSales],
     ];
     const csvContent =
@@ -78,9 +78,9 @@ export default function YearlySales() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.date}>
-                <StyledTableCell align="left">{row.date}</StyledTableCell>
+            {rows.map((row, i) => (
+              <StyledTableRow key={row.year}>
+                <StyledTableCell align="left">{row.year}</StyledTableCell>
                 <StyledTableCell align="left">{row.totalSales}</StyledTableCell>
               </StyledTableRow>
             ))}

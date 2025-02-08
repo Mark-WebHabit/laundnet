@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { DataContext } from "../context/DataStore";
 
 const SidebarItem = ({ icon, text, isSidebarOpen, redirect }) => {
   return (
@@ -15,6 +16,7 @@ const SidebarItem = ({ icon, text, isSidebarOpen, redirect }) => {
 
 const AdminSidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
+  const { setUser } = useContext(DataContext);
   return (
     <div
       className={`bg-gray-800 text-white h-screen transition-all duration-300 ease-in-out ${
@@ -91,6 +93,17 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar }) => {
             text="Sales"
             isSidebarOpen={isSidebarOpen}
             redirect={() => navigate("sales")}
+          />
+
+          <SidebarItem
+            icon="/images/logout.png"
+            text="Logout"
+            isSidebarOpen={isSidebarOpen}
+            redirect={() => {
+              localStorage.removeItem("user");
+              setUser(null);
+              navigate("/");
+            }}
           />
         </ul>
       </div>

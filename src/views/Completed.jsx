@@ -174,34 +174,40 @@ export default function Completed() {
           Export as CSV
         </Button>
       </Box>
-      <TableContainer component={Paper} className="h-full max-h-full  ">
-        <Table aria-label="collapsible table">
-          <TableHead className=" bg-red-700/30">
-            <TableRow>
-              <TableCell>Username</TableCell>
-              <TableCell align="left">Phone</TableCell>
-              <TableCell align="left">Address</TableCell>
-              <TableCell align="left">Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows.map((row, i) => (
-              <Row
-                key={i}
-                row={row}
-                open={open === i}
-                onOpen={() => {
-                  if (open === i) {
-                    setOpen(null);
-                  } else {
-                    setOpen(i);
-                  }
-                }}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {rows?.length > 0 ? (
+        <TableContainer component={Paper} className="h-full max-h-full  ">
+          <Table aria-label="collapsible table">
+            <TableHead className=" bg-red-700/30">
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell align="left">Phone</TableCell>
+                <TableCell align="left">Address</TableCell>
+                <TableCell align="left">Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredRows.map((row, i) => (
+                <Row
+                  key={i}
+                  row={row}
+                  open={open === i}
+                  onOpen={() => {
+                    if (open === i) {
+                      setOpen(null);
+                    } else {
+                      setOpen(i);
+                    }
+                  }}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <p className="text-center mt-8 text-4xl font-bold">
+          No completed orders
+        </p>
+      )}
     </Box>
   );
 }

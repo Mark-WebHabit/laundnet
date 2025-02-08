@@ -29,35 +29,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(date, totalSales) {
-  return { date, totalSales };
-}
-
-export default function Daily() {
-  const [rows, setRows] = React.useState([
-    createData("February 1 2025", 1200),
-    createData("February 2 2025", 1200),
-    createData("February 3 2025", 1200),
-    createData("February 4 2025", 1200),
-    createData("February 5 2025", 1200),
-    createData("February 6 2025", 1200),
-  ]);
+export default function Daily({ daily }) {
+  const [rows, setRows] = React.useState([]);
 
   const [month, setMonth] = React.useState("");
   const [numDates, setNumDates] = React.useState(0);
   const [filteredRows, setFilteredRows] = React.useState(rows);
 
   React.useEffect(() => {
+    setRows(daily);
+  }, [daily]);
+
+  React.useEffect(() => {
+    let newRows = rows;
+
     if (month) {
-      const newRows = rows.filter((el) =>
+      newRows = newRows.filter((el) =>
         el.date.toLowerCase().includes(month.toLowerCase())
       );
-
-      setFilteredRows(newRows);
-    } else {
-      setFilteredRows(rows);
     }
-  }, [month]);
+
+    if (numDates && numDates > 0) {
+      newRows = newRows.slice(0, numDates);
+    }
+
+    setFilteredRows(newRows);
+  }, [month, numDates, rows]);
 
   React.useEffect(() => {
     if (numDates && numDates > 0) {
@@ -84,7 +81,7 @@ export default function Daily() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "sales_data.csv");
+    link.setAttribute("download", "sales-daily_data.csv");
     document.body.appendChild(link);
     link.click();
   };
