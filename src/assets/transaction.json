@@ -1,0 +1,32 @@
+[
+  {
+    "userId": 0,
+    "status": "Pending",
+    "date": "February 7 2025 8:00 AM",
+    "weight": 2,
+    "addsOn": [{ "Fold": 80 }, { "Delivery": 100 }],
+    "addsOnCost": 180,
+    "weightCost": 160,
+    "overAllTotal": 340
+  },
+  {
+    "userId": 1,
+    "status": "Pending",
+    "date": "February 7 2025 9:00 AM",
+    "weight": 3,
+    "addsOn": [{ "Delivery": 100 }],
+    "addsOnCost": 100,
+    "weightCost": 240,
+    "overAllTotal": 320
+  },
+  {
+    "userId": 1,
+    "status": "Pending",
+    "date": "February 7 2025 10:00 AM",
+    "weight": 1,
+    "addsOnCost": 0,
+    "weightCost": 80,
+    "overAllTotal": 80,
+    "addsOn": []
+  }
+]

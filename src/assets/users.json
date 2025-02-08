@@ -1,0 +1,26 @@
+[
+  {
+    "username": "user1",
+    "phone": "09991876521",
+    "address": "123 Main St, City, Country",
+    "isAdmin": false
+  },
+  {
+    "username": "user2",
+    "phone": "09991876522",
+    "address": "456 Elm St, City, Country",
+    "isAdmin": false
+  },
+  {
+    "username": "user3",
+    "phone": "09991876523",
+    "address": "789 Oak St, City, Country",
+    "isAdmin": false
+  },
+  {
+    "username": "user4",
+    "phone": "09991876523",
+    "address": "789 Oak St, City, Country",
+    "isAdmin": true
+  }
+]

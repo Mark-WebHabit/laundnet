@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Pickup",
+    "price": 100,
+    "description": "Pickup service from your location"
+  },
+  {
+    "name": "Delivery",
+    "price": 100,
+    "description": "Delivery service to your location"
+  },
+  {
+    "name": "Fold",
+    "price": 80,
+    "description": "Folding service for your clothes"
+  }
+]

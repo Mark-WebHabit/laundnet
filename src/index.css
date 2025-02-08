@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  font-family: "Noto Serif", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  user-select: none;
+}
+body {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.shadow {
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Optional: Ensure the content doesn't get cut off */
+.hide-scroll {
+  overflow: -moz-scrollbars-none; /* Legacy Firefox */
+  overflow: hidden;
+}
