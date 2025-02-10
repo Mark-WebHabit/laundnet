@@ -38,7 +38,6 @@ export default function YearlySales({ yearly }) {
 
   React.useEffect(() => {
     setRows(yearly);
-    console.log(yearly);
   }, [yearly]);
 
   const exportCSV = () => {

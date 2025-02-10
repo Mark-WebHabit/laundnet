@@ -14,6 +14,13 @@ import Services from "./views/Services";
 import Appointments from "./views/Appointments";
 import Sales from "./views/Sales";
 
+import User from "../src/layout/User";
+import UserTransactions from "./views/UserTransactions";
+import Book from "./views/Book";
+import Prices from "./views/Prices";
+
+import Status from "./views/Status";
+
 // context
 import DataStore from "./context/DataStore";
 
@@ -35,6 +42,14 @@ function App() {
             <Route path="appointments" element={<Appointments />} />
             <Route path="sales" element={<Sales />} />
           </Route>
+
+          <Route path="/user" element={<User />}>
+            <Route index element={<UserTransactions />} />
+            <Route path="reservation" element={<Book />} />
+            <Route path="prices" element={<Prices />} />
+          </Route>
+
+          <Route path="/booked/:orderid/:userid" element={<Status />} />
         </Routes>
       </Router>
     </DataStore>

@@ -42,7 +42,6 @@ export default function MonthlySales({ monthly }) {
 
   React.useEffect(() => {
     setRows(monthly);
-    console.log(monthly);
   }, [monthly]);
 
   React.useEffect(() => {

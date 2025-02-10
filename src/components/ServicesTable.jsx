@@ -11,9 +11,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
 import { DataContext } from "../context/DataStore";
-import { push, ref, remove } from "firebase/database";
+import { push, ref, remove, update } from "firebase/database";
 import { db } from "../../firebase";
+import { useRef } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,30 +38,30 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(service, desc, price) {
-  return { service, desc, price };
-}
-
 export default function ServicesTable() {
   const [rows, setRows] = React.useState([]);
-
-  const { services, servicesRef } = React.useContext(DataContext);
+  const [editPrice, setEditPrice] = React.useState(false);
+  const { services, servicesRef, weightPrice, setWeightPrice } =
+    React.useContext(DataContext);
   const [newService, setNewService] = React.useState({
     name: "",
     description: "",
     price: "",
   });
 
+  const weightRef = useRef(null);
+
   React.useEffect(() => {
     setRows(services);
   }, [services]);
 
-  const handleAddService = () => {
-    // setRows([
-    //   ...rows,
-    //   createData(newService.service, newService.desc, Number(newService.price)),
-    // ]);
+  React.useEffect(() => {
+    if (weightRef?.current) {
+      weightRef.current.focus();
+    }
+  }, [weightRef, editPrice]);
 
+  const handleAddService = () => {
     if (!newService.name || !newService.description || !newService.price) {
       alert("All fields are required");
       return;
@@ -74,6 +77,21 @@ export default function ServicesTable() {
   const handleDelete = (uid) => {
     const serviceRef = ref(db, `services/${uid}`);
     remove(serviceRef).catch((error) => alert(error.message));
+  };
+
+  const handleChangePrice = () => {
+    if (weightPrice <= 0) {
+      alert("Service fee cannot be lower than 0");
+      return;
+    }
+
+    const priceRef = ref(db, "serviceFee");
+
+    update(priceRef, {
+      price: weightPrice,
+    })
+      .then(() => setEditPrice(false))
+      .catch((error) => alert(error.message));
   };
 
   return (
@@ -122,6 +140,38 @@ export default function ServicesTable() {
             </TableRow>
           </TableHead>
           <TableBody>
+            <StyledTableRow>
+              <StyledTableCell align="left">Service fee</StyledTableCell>
+              <StyledTableCell align="left"></StyledTableCell>
+              <StyledTableCell align="left">
+                <input
+                  type="number"
+                  value={weightPrice}
+                  onChange={(e) => setWeightPrice(e.target.value)}
+                  disabled={!editPrice}
+                  ref={weightRef}
+                />
+              </StyledTableCell>
+              <StyledTableCell align="left">
+                {!editPrice ? (
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => {
+                      setEditPrice(true);
+                    }}
+                  >
+                    <EditIcon className="text-blue-600" />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleChangePrice()}
+                  >
+                    <SaveIcon className="text-blue-600" />
+                  </IconButton>
+                )}
+              </StyledTableCell>
+            </StyledTableRow>
             {rows.map((row) => (
               <StyledTableRow key={row.uid}>
                 <StyledTableCell align="left">{row.name}</StyledTableCell>
@@ -134,7 +184,7 @@ export default function ServicesTable() {
                     aria-label="delete"
                     onClick={() => handleDelete(row.uid)}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon className="text-red-800" />
                   </IconButton>
                 </StyledTableCell>
               </StyledTableRow>

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-scroll";
-import { Link as Lk, useNavigate } from "react-router-dom";
+import { Link as Lk } from "react-router-dom";
 import { DataContext } from "../context/DataStore";
 
 function Header() {
@@ -9,9 +9,9 @@ function Header() {
   return (
     <div
       role="header"
-      className="h-[80px] w-full fixed bg-white/10 top-0 left-0 z-20 flex items-center justify-between px-4"
+      className="h-[80px] w-full fixed bg-white/60 top-0 left-0 z-20 flex items-center justify-between px-4"
     >
-      <h1 className="text-white text-2xl ">LAUNDNET</h1>
+      <h1 className="text-black text-2xl hidden md:block ">LAUNDNET</h1>
 
       <ul
         role="nav"

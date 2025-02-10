@@ -28,7 +28,6 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
     // Input validation
     if (!formData.username || !formData.password || !formData.confirmPassword) {

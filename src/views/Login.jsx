@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import Input from "../components/Input";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ref, get, query, orderByChild, equalTo } from "firebase/database";
 import bcrypt from "bcryptjs";
 import { db } from "../../firebase";
@@ -75,6 +75,9 @@ function Login() {
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+      <small className="text-blue-500 font-bold">
+        <Link to={"/"}>Home</Link>
+      </small>
       <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
         Login
       </h2>

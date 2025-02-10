@@ -5,8 +5,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { PER_KG } from "../assets/prices";
-import { ADDS_ON } from "../assets/prices";
 import { DataContext } from "../context/DataStore";
 import { push, set } from "firebase/database";
 import { db } from "../../firebase";
@@ -21,13 +19,11 @@ function WalkinModal({ setAddTransaction }) {
   const [dt, setDt] = useState(dayjs());
   const [formattedDt, setFormattedDt] = useState(null);
 
-  const { services, ordersRef } = useContext(DataContext);
+  const { services, ordersRef, weightPrice } = useContext(DataContext);
 
   useEffect(() => {
     const formattedDate = dt.format("MMMM D YYYY h:00 A");
     setFormattedDt(formattedDate);
-
-    console.log(formattedDate);
   }, [dt]);
 
   const handleSubmit = () => {
@@ -62,7 +58,7 @@ function WalkinModal({ setAddTransaction }) {
         }, 0)
       : 0;
 
-    const weightFee = weight * PER_KG;
+    const weightFee = weight * weightPrice;
 
     const data = {
       username,
@@ -130,7 +126,7 @@ function WalkinModal({ setAddTransaction }) {
           </div>
           <div className="my-2">
             <TextField
-              label={`Weight (₱${PER_KG}/KG)`}
+              label={`Weight (₱${weightPrice}/KG)`}
               variant="outlined"
               type="number"
               value={weight}

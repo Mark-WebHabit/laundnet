@@ -4,6 +4,39 @@ import { db } from "../../firebase";
 
 export const DataContext = createContext(null);
 
+const status = [
+  {
+    status: "Pending",
+    description: "Your laundry is waiting to be processed.",
+  },
+  {
+    status: "Preparing",
+    description: "We're getting everything ready for your laundry.",
+  },
+  { status: "Wash", description: "Your clothes are currently being washed." },
+  { status: "Fold", description: "We're folding your clothes with care." },
+  { status: "Dry", description: "Your laundry is being dried." },
+  {
+    status: "For Pick Up",
+    description: "Your laundry is ready for you to pick up.",
+  },
+  {
+    status: "For Deliver",
+    description: "Your laundry is on its way to be delivered.",
+  },
+  {
+    status: "Delivered",
+    description: "Your laundry has been delivered to your doorstep.",
+  },
+  { status: "Claimed", description: "Your laundry has been claimed." },
+  {
+    status: "Cancelled",
+    description: "Your laundry order has been cancelled.",
+  },
+  { status: "On the way", description: "Your laundry is on the way" },
+  { status: "On The Way", description: "Your laundry is on the way" },
+];
+
 function DataStore({ children }) {
   const [services, setServices] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -15,12 +48,14 @@ function DataStore({ children }) {
   const [logistics, setLogistics] = useState([]);
   const [user, setUser] = useState(false);
   const [weekly, setWeekly] = useState([]);
+  const [weightPrice, setWeightPrice] = useState(30);
 
   // ref
   const servicesRef = ref(db, "services");
   const customersRef = ref(db, "users");
   const ordersRef = ref(db, "orders");
   const logisticsRef = ref(db, "logistics");
+  const serviceFeeRef = ref(db, "serviceFee");
 
   useEffect(() => {
     // Retrieve user from localStorage
@@ -35,6 +70,16 @@ function DataStore({ children }) {
 
       setServices(servicesArray);
       setServicesFetched(true);
+    });
+
+    const unsubscribeServiceFee = onValue(serviceFeeRef, (snapshot) => {
+      const data = snapshot.val();
+
+      if (data) {
+        setWeightPrice(data?.price || 0);
+      } else {
+        setWeightPrice(0);
+      }
     });
 
     const unsubscribeLogistics = onValue(logisticsRef, (snapshot) => {
@@ -63,6 +108,7 @@ function DataStore({ children }) {
       unsubscribeServices();
       unsubscribeCustomers();
       unsubscribeLogistics();
+      unsubscribeServiceFee();
     };
   }, []);
 
@@ -180,6 +226,9 @@ function DataStore({ children }) {
         setUser,
         ordersRef,
         weekly,
+        weightPrice,
+        status,
+        setWeightPrice,
       }}
     >
       {children}

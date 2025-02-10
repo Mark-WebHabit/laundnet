@@ -50,7 +50,7 @@ function Row(props) {
                   ? "History"
                   : "No Transactions yet"}
               </Typography>
-              {filteredHistory.length > 0 && (
+              {filteredHistory?.length > 0 && (
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>

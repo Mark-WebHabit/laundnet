@@ -39,3 +39,24 @@ body {
   overflow: -moz-scrollbars-none; /* Legacy Firefox */
   overflow: hidden;
 }
+
+@keyframes bounceIn {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.animate-icon {
+  animation: bounceIn 1s ease-in-out;
+}

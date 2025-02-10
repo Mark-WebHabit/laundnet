@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { DataContext } from "../context/DataStore";
 
 function Home() {
+  const navigate = useNavigate();
+  const { user } = useContext(DataContext);
   return (
     <div
       id="home"
@@ -17,7 +21,12 @@ function Home() {
           matters!"
         </p>
 
-        <button className="block w-[200px] bg-orange-700 mx-auto py-2 mt-4 text-2xl text-white cursor-pointer  ">
+        <button
+          className="block w-[200px] bg-orange-700 mx-auto py-2 mt-4 text-2xl text-white cursor-pointer"
+          onClick={() =>
+            navigate(`${user?.isAdmin ? "/admin" : user ? "/user" : "/auth"}`)
+          }
+        >
           BOOK
         </button>
       </div>
