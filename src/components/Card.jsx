@@ -6,7 +6,7 @@ const Card = ({ image, title, body }) => {
       <img
         src={`/images/${image}.png`}
         alt="Serice"
-        className="w-[30%] min-w-[50px    ]"
+        className="w-[30%] min-w-[50px]"
       />
       <p className="text-xl text-red-700">{title}</p>
       <small className="text-center text-[15px]">{body}</small>

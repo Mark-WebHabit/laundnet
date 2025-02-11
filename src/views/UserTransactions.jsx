@@ -23,6 +23,31 @@ function Row(props) {
 
   const [status, setStatus] = useState(INPROCESS_STATUS[0]);
 
+  const generateReceipt = (order) => {
+    const receiptContent = `
+      Order Receipt
+      --------------
+      Username: ${order.username}
+      Phone: ${order.phone}
+      Address: ${order.address}
+      Date: ${order.date}
+      Weight: ${order.weight} kg
+      Weight Fee: ₱${order.weightCost}
+      Additionals: ${order.additional}
+      Additionals Fee: ₱${order.addsOnCost}
+      Total Price: ₱${order.overAllTotal}
+    `;
+
+    const blob = new Blob([receiptContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Receipt-${order.uid}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleChange = (e, uid) => {
     const current = status?.name;
     const value = e.target.value;
@@ -63,12 +88,21 @@ function Row(props) {
         <TableCell align="left">{row.phone}</TableCell>
         <TableCell align="left">{row.address}</TableCell>
         <TableCell align="left">{row.status}</TableCell>
-        <TableCell align="left">
+        <TableCell
+          align="left"
+          className="text-blue-600"
+          onClick={() => {
+            if (row?.status === "Pending" || row?.status === "Cancelled") {
+              return;
+            }
+            generateReceipt(row);
+          }}
+        >
           {row?.status == "Pending"
             ? "Not yet available"
             : row?.status == "Cancelled"
             ? "Not Available"
-            : "download"}
+            : "Click to Download"}
         </TableCell>
         <TableCell align="left">
           <a

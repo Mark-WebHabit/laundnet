@@ -30,6 +30,13 @@ function Services() {
             "Enjoy the convenience of our online reservation system. Schedule your laundry drop-off and pick-up at your convenience, saving you time and hassle."
           }
         />
+        <Card
+          image={"truck"}
+          title={"Pickup and Delivery"}
+          body={
+            "Take advantage of our Pickup and Delivery service. We collect your laundry from your doorstep and deliver it back to you, clean and fresh, at your convenience."
+          }
+        />
       </div>
     </div>
   );

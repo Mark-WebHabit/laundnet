@@ -18,6 +18,7 @@ import User from "../src/layout/User";
 import UserTransactions from "./views/UserTransactions";
 import Book from "./views/Book";
 import Prices from "./views/Prices";
+import Profile from "./views/Profile";
 
 import Status from "./views/Status";
 
@@ -47,6 +48,7 @@ function App() {
             <Route index element={<UserTransactions />} />
             <Route path="reservation" element={<Book />} />
             <Route path="prices" element={<Prices />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
           <Route path="/booked/:orderid/:userid" element={<Status />} />
