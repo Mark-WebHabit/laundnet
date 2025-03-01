@@ -4,7 +4,7 @@ import { DataContext } from "../context/DataStore";
 import NavBar from "../components/userNav";
 function User() {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(DataContext);
+  const { user } = useContext(DataContext);
 
   useEffect(() => {
     if (!user) {

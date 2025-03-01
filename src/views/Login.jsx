@@ -56,6 +56,8 @@ function Login() {
         uid: userData.uid,
         username: userData.username,
         isAdmin: userData.isAdmin,
+        phone: userData.phone,
+        address: userData.address,
       };
       localStorage.setItem("user", JSON.stringify(userSession));
 

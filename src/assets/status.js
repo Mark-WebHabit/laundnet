@@ -28,7 +28,7 @@ export const INPROCESS_STATUS = [
   { name: "Fold", description: "Your clothes/items are folded" },
   { name: "Dry", description: "Your clothes/items are being dried" },
   {
-    name: "For Pick Up",
+    name: "For Claim",
     description: "Your clothes/items are ready for pick up",
   },
   {

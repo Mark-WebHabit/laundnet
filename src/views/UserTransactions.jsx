@@ -10,18 +10,13 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { MenuItem, Select } from "@mui/material";
 
-import { INPROCESS_STATUS } from "../assets/status";
 import { DataContext } from "../context/DataStore";
-import { ref, update } from "firebase/database";
-import { db } from "../../firebase";
+
 import { useNavigate } from "react-router-dom";
 
 function Row(props) {
-  const { row } = props;
-
-  const [status, setStatus] = useState(INPROCESS_STATUS[0]);
+  const { row, user } = props;
 
   const generateReceipt = (order) => {
     const receiptContent = `
@@ -48,29 +43,6 @@ function Row(props) {
     document.body.removeChild(link);
   };
 
-  const handleChange = (e, uid) => {
-    const current = status?.name;
-    const value = e.target.value;
-    setStatus(value);
-
-    if (current === value.name) {
-      return;
-    }
-
-    const isOk = window.confirm(
-      "Are you sure to update this order? this cant be return to preparing"
-    );
-    if (!isOk) return;
-
-    const orderRef = ref(db, `orders/${uid}`);
-
-    update(orderRef, {
-      status: value.name,
-    })
-      .then(() => alert("Updated"))
-      .catch((error) => alert(error.message));
-  };
-
   return (
     <React.Fragment>
       <TableRow
@@ -83,7 +55,7 @@ function Row(props) {
         }}
       >
         <TableCell component="th" scope="row">
-          {row.username}
+          {user?.username}
         </TableCell>
         <TableCell align="left">{row.phone}</TableCell>
         <TableCell align="left">{row.address}</TableCell>
@@ -195,10 +167,9 @@ export default function UserTransactions() {
   });
 
   const exportToCSV = () => {
+    console.log(user);
+
     const headers = [
-      "Username",
-      "Phone",
-      "Address",
       "Date",
       "Time",
       "Year",
@@ -212,12 +183,8 @@ export default function UserTransactions() {
     let csvData = filteredRows
       .map((row) => {
         const adds = row?.additional?.replace(/,/g, " ");
-        const newaddress = row?.address?.replace(/,/g, " ");
 
         return [
-          row.username,
-          row.phone,
-          newaddress,
           row.monthDay,
           row.time,
           row.year,
@@ -281,6 +248,7 @@ export default function UserTransactions() {
                 <Row
                   key={i}
                   row={row}
+                  user={user}
                   open={open === i}
                   onOpen={() => {
                     if (open === i) {

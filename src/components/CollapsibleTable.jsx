@@ -133,27 +133,42 @@ export default function CollapsibleTable() {
       "Total price (₱)",
     ];
 
-    let csvData = filteredRows
+    const csvData = filteredRows
       .map((row) => {
-        return row.history
-          .filter((historyRow) => true === true)
-          .map((historyRow) => {
-            const adds = historyRow?.additional?.replace(/,/g, " ");
-            const newaddress = row?.address?.replace(/,/g, " ");
-            return [
-              row.username,
-              row.phone,
-              newaddress,
-              historyRow.monthDay,
-              historyRow.time,
-              historyRow.year,
-              historyRow.weightCost,
-              adds || "None",
-              historyRow.addsOnCost || 0,
-              historyRow.overAllTotal,
-            ].join(",");
-          })
-          .join("\n");
+        if (!row.history || row.history.length === 0) {
+          const newaddress = row?.address?.replace(/,/g, " ");
+          return [
+            row.username,
+            row.phone,
+            newaddress,
+            "N/A",
+            "N/A",
+            "N/A",
+            "N/A",
+            "N/A",
+            "N/A",
+            "N/A",
+          ].join(",");
+        } else {
+          return row.history
+            .map((historyRow) => {
+              const adds = historyRow?.additional?.replace(/,/g, " ");
+              const newaddress = row?.address?.replace(/,/g, " ");
+              return [
+                row.username,
+                row.phone,
+                newaddress,
+                historyRow.monthDay,
+                historyRow.time,
+                historyRow.year,
+                historyRow.weightCost,
+                adds || "None",
+                historyRow.addsOnCost || 0,
+                historyRow.overAllTotal,
+              ].join(",");
+            })
+            .join("\n");
+        }
       })
       .join("\n");
 
