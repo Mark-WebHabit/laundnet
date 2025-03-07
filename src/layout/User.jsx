@@ -17,7 +17,7 @@ function User() {
   }, [user]);
 
   return (
-    <main className="min-h-screen w-full border flex items-center justify-center bg-gray-100 flex-col">
+    <main className="min-h-screen w-full border flex items-center justify-center bg-gray-100 flex-col overflow-x-scroll">
       <NavBar />
       <Outlet />
     </main>

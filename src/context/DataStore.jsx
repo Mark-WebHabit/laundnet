@@ -1,8 +1,14 @@
 import React, { createContext, useState, useEffect } from "react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase";
+import { createClient } from "@supabase/supabase-js";
 
 export const DataContext = createContext(null);
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, anonKey);
 
 const status = [
   {

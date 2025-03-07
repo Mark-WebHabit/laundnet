@@ -9,6 +9,11 @@ function NavBar() {
     <nav className="bg-blue-600 p-4 border my-8 ">
       <ul className="flex space-x-8">
         <li>
+          <Link to="/" className="text-white">
+            Home
+          </Link>
+        </li>
+        <li>
           <Link to="/user" className="text-white">
             Transactions
           </Link>

@@ -6,10 +6,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import QRCode from "qrcode";
+import { Modal, Fade, Backdrop } from "@mui/material";
 
 import { DataContext } from "../context/DataStore";
 import { push, set, child } from "firebase/database";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { supabase } from "../context/DataStore";
 import { db } from "../../firebase";
 
 import { useNavigate } from "react-router-dom";
@@ -25,6 +27,12 @@ function Book() {
   const [weightFee, setWeightFee] = useState(0);
   const [adds, setAdds] = useState([]);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
+
+  // transaction
+  const [isPay, setIsPay] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [amount, setAmount] = useState("");
+  const [file, setFile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -72,7 +80,7 @@ function Book() {
     }
   }, [dt, orders]);
 
-  const handleSubmit = async () => {
+  const handlePay = async () => {
     if (weight <= 0) {
       alert("Please enter a weight");
       return;
@@ -88,6 +96,27 @@ function Book() {
       alert(
         "The selected time is already taken. Please choose a different time."
       );
+      return;
+    }
+
+    setIsPay(true);
+  };
+
+  const handleSubmit = async () => {
+    if (!file) {
+      alert("Please upload a proof of payment");
+      return;
+    }
+
+    if (amount < addsOnTotal + weightFee) {
+      alert("Amount can't be lower than cost");
+      return;
+    }
+
+    const fileUrl = await uploadImage(file);
+
+    if (!fileUrl) {
+      alert("Proof not uploaded. Try again");
       return;
     }
 
@@ -107,6 +136,9 @@ function Book() {
       status: "Pending",
       userId: user.uid,
       qrCodeUrl: qrCode, // Add QR code URL to data
+      referenceNumber,
+      proof: fileUrl,
+      amountPresented: amount,
     };
 
     try {
@@ -133,6 +165,38 @@ function Book() {
   const filterTime = (time) => {
     const timeString = dayjs(time).format("h:mm A");
     return !invalidTimes.includes(timeString);
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    console.log(selectedFile);
+
+    if (selectedFile && selectedFile?.type?.startsWith("image/")) {
+      setFile(selectedFile);
+    } else {
+      alert("Please upload an image file.");
+      setFile(null);
+    }
+  };
+
+  const uploadImage = async (file) => {
+    const fileName = `${Date.now()}-${file.name}`; // Unique filename
+    const { data, error } = await supabase.storage
+      .from("medias") // Replace with your bucket name
+      .upload(fileName, file);
+
+    if (error) {
+      alert("Upload error: " + error.message);
+      return null;
+    }
+
+    // Get the public URL of the uploaded file
+    const { data: publicUrlData } = supabase.storage
+      .from("medias")
+      .getPublicUrl(fileName);
+
+    return publicUrlData.publicUrl; // Use this URL to display or store
   };
 
   return (
@@ -208,9 +272,9 @@ function Book() {
         <div className="flex items-center justify-center gap-4 mt-4">
           <button
             className="px-4 py-2 bg-blue-600 rounded-xl text-white font-bold"
-            onClick={handleSubmit}
+            onClick={handlePay}
           >
-            SUBMIT
+            PAY
           </button>
           <button
             className="px-4 py-2 bg-red-600 rounded-xl text-white font-bold"
@@ -220,8 +284,84 @@ function Book() {
           >
             CANCEL
           </button>
+          <Modal
+            open={isPay}
+            onClose={() => setIsPay(false)}
+            BackdropComponent={Backdrop} // ✅ Correct
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={isPay}>
+              <div className="p-6 rounded-lg scale-z-100 w-screen h-screen grid place-items-center">
+                <div className="w-full max-w-[500px] min-w-[250px] py-8 px-4 bg-white rounded-2xl shadow-lg">
+                  <img
+                    src="/images/qr.jpg"
+                    alt="QR"
+                    className="w-[300px] aspect-square  mx-auto border mb-4"
+                  />
+                  <h2 className="text-xl font-semibold mb-4">
+                    Payment Details
+                  </h2>
+
+                  {/* Reference Number */}
+                  <label className="block mb-2">Reference Number</label>
+                  <input
+                    type="text"
+                    value={referenceNumber}
+                    onChange={(e) => setReferenceNumber(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                  />
+
+                  {/* Amount */}
+                  <label className="block mb-2">Amount</label>
+                  <input
+                    type="number"
+                    value={amount}
+                    minLength={4}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                  />
+
+                  {/* File Upload */}
+                  <label className="block mb-2">Upload Proof (JPG only)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      handleFileChange(e);
+                    }}
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                  />
+
+                  {/* Buttons */}
+                  <div className="flex justify-between">
+                    <button
+                      onClick={() => setIsPay(false)}
+                      className="px-4 py-2 bg-red-500 text-white rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSubmit}
+                      disabled={!referenceNumber || !amount || !file}
+                      className={`px-4 py-2 rounded text-white ${
+                        referenceNumber && amount && file
+                          ? "bg-blue-500"
+                          : "bg-gray-400 cursor-not-allowed"
+                      }`}
+                    >
+                      Submit Payment
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Fade>
+          </Modal>
         </div>
       </div>
+
+      {/* for payment */}
     </div>
   );
 }
