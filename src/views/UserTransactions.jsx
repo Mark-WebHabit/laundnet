@@ -16,6 +16,8 @@ import { Scanner } from "@yudiel/react-qr-scanner";
 import { DataContext } from "../context/DataStore";
 
 import { useNavigate } from "react-router-dom";
+import { ref, remove } from "firebase/database";
+import { db } from "../../firebase";
 
 function Row(props) {
   const { row, user } = props;
@@ -91,6 +93,37 @@ function Row(props) {
             />
             Download QR
           </a>
+        </TableCell>
+        <TableCell align="left">
+          {(row.status === "Pending" || row.status === "Cancelled") && (
+            <p
+              className="bg-red-700 text-center text-md text-white font-bold px-4 py-2 rounded-2xl"
+              onClick={async () => {
+                try {
+                  if (!row?.uid) {
+                    return;
+                  }
+
+                  const confirm = window.confirm(
+                    "Are you sure to delete this order?"
+                  );
+
+                  if (!confirm) {
+                    return;
+                  }
+
+                  const orderRef = ref(db, `orders/${row.uid}`);
+                  await remove(orderRef);
+                  alert("Deleted Successfully");
+                } catch (error) {
+                  console.error("Error deleting order: " + error);
+                  alert("Error deleting order: " + error.message);
+                }
+              }}
+            >
+              DEL
+            </p>
+          )}
         </TableCell>
       </TableRow>
       <TableRow
@@ -296,6 +329,7 @@ export default function UserTransactions() {
                 <TableCell align="left">Status</TableCell>
                 <TableCell align="left">Receipt</TableCell>
                 <TableCell align="left">QR Code</TableCell>
+                <TableCell align="left"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
