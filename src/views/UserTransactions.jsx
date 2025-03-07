@@ -20,9 +20,11 @@ import { ref, remove } from "firebase/database";
 import { db } from "../../firebase";
 
 function Row(props) {
-  const { row, user } = props;
+  const { row, user, setShowReceipt } = props;
 
   const generateReceipt = (order) => {
+    console.log(order);
+
     const receiptContent = `
       Order Receipt
       --------------
@@ -71,14 +73,17 @@ function Row(props) {
             if (row?.status === "Pending" || row?.status === "Cancelled") {
               return;
             }
-            generateReceipt(row);
+            setShowReceipt(row);
+            console.log(row);
+
+            // generateReceipt(row);
           }}
         >
           {row?.status == "Pending"
             ? "Not yet available"
             : row?.status == "Cancelled"
             ? "Not Available"
-            : "Click to Download"}
+            : "View"}
         </TableCell>
         <TableCell align="left">
           <a
@@ -180,6 +185,8 @@ export default function UserTransactions() {
   const [rows, setRows] = useState([]);
   const [showScanner, setShowScanner] = useState();
   const navigate = useNavigate();
+
+  const [showReceipt, setShowReceipt] = useState(null);
 
   const { orders, user } = useContext(DataContext);
 
@@ -339,6 +346,7 @@ export default function UserTransactions() {
                   row={row}
                   user={user}
                   open={open === i}
+                  setShowReceipt={setShowReceipt}
                   onOpen={() => {
                     if (open === i) {
                       setOpen(null);
@@ -354,6 +362,95 @@ export default function UserTransactions() {
       ) : (
         <p className="text-center mt-8 text-4xl font-bold">No orders</p>
       )}{" "}
+      <Modal
+        open={showReceipt}
+        onClose={() => setShowReceipt(null)}
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={showReceipt}>
+          <div className="h-screen w-screen grid place-items-center z-50">
+            <div className="w-full max-w-[800px] p-6 rounded-2xl bg-white shadow-lg relative">
+              {/* Close Button */}
+              <button
+                className="absolute top-3 right-4 text-gray-600 hover:text-black"
+                onClick={() => setShowReceipt(null)}
+              >
+                ✕
+              </button>
+
+              <p className="text-center font-bold text-3xl text-blue-600">
+                LAUNDNET
+              </p>
+              <p className="text-center text-gray-500">
+                {showReceipt?.date || "No Date"}
+              </p>
+
+              {/* Receipt Details */}
+              <div className="mt-4 space-y-2">
+                <p className="font-semibold text-lg">
+                  Receipt ID: {showReceipt?.uid || "N/A"}
+                </p>
+
+                {/* Add-ons */}
+                <p className="font-semibold">Add-ons:</p>
+                <ul className="list-disc ml-6 text-gray-700">
+                  {showReceipt?.addsOn?.length > 0
+                    ? showReceipt?.addsOn.map((item, index) => {
+                        const [name, price] = Object.entries(item)[0];
+                        return (
+                          <li key={index} className="flex justify-between">
+                            <span>{name.trim()}</span>
+                            <span>₱{price}</span>
+                          </li>
+                        );
+                      })
+                    : "None"}
+                </ul>
+
+                <p className="flex justify-between font-semibold">
+                  <span>Add-ons Cost:</span>
+                  <span>₱{showReceipt?.addsOnCost || 0}</span>
+                </p>
+
+                <p className="flex justify-between font-semibold">
+                  <span>Amount Presented:</span>
+                  <span>₱{showReceipt?.amountPresented || 0}</span>
+                </p>
+
+                <p className="flex justify-between text-xl font-bold">
+                  <span>Total:</span>
+                  <span>₱{setShowReceipt?.overAllTotal || 0}</span>
+                </p>
+              </div>
+
+              {/* QR Code & Proof */}
+              <div className="mt-6 flex flex-col items-center">
+                {setShowReceipt?.qrCodeUrl && (
+                  <img
+                    src={setShowReceipt?.qrCodeUrl}
+                    alt="QR Code"
+                    className="w-32 h-32 object-contain"
+                  />
+                )}
+
+                {showReceipt?.proof && (
+                  <a
+                    href={showReceipt?.proof}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline mt-3"
+                  >
+                    View Proof of Payment
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </Fade>
+      </Modal>
     </Box>
   );
 }
