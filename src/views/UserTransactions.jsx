@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import Table from "@mui/material/Table";
@@ -10,6 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { Modal, Backdrop, Fade } from "@mui/material";
+import { Scanner } from "@yudiel/react-qr-scanner";
 
 import { DataContext } from "../context/DataStore";
 
@@ -143,6 +145,7 @@ export default function UserTransactions() {
   const [searchMonthDay, setSearchMonthDay] = React.useState("");
   const [open, setOpen] = useState(null);
   const [rows, setRows] = useState([]);
+  const [showScanner, setShowScanner] = useState();
   const navigate = useNavigate();
 
   const { orders, user } = useContext(DataContext);
@@ -209,8 +212,53 @@ export default function UserTransactions() {
     document.body.removeChild(link);
   };
 
+  const handleScan = (result) => {
+    if (result) {
+      const raawValue = result[0]?.rawValue;
+
+      console.log(result);
+
+      if (raawValue) {
+        window.location.replace(raawValue);
+      }
+    }
+  };
+
+  const handleError = (error) => {
+    console.error(error);
+  };
+
   return (
     <Box className="w-full  flex flex-col  h-[100vh] max-w-[1000px] max-h-[900px] overflow-scroll  ">
+      <Modal
+        open={showScanner}
+        onClose={() => setShowScanner(false)}
+        slots={Backdrop}
+        slotProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={showScanner}>
+          <div className="w-screen h-screen grid place-items-center">
+            <div className="min-w-[200px] max-w-[500px] w-full aspect-square bg-white flex flex-col">
+              <div className="flex-1 border-2">
+                {/* put the scanner here */}
+                <div className="p-4">
+                  <Scanner onScan={handleScan} onError={handleError} />
+                </div>
+              </div>
+              <div className="flex justify-end p-3">
+                <p
+                  className="border px-8 py-3 rounded-2xl bg-red-800 text-white font-bold"
+                  onClick={() => setShowScanner(false)}
+                >
+                  CLOSE
+                </p>
+              </div>
+            </div>
+          </div>
+        </Fade>
+      </Modal>
       <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
         <TextField
           label="Search by Month Day"
@@ -220,7 +268,7 @@ export default function UserTransactions() {
           className="bg-white"
         />
         <Button variant="contained" color="primary" onClick={exportToCSV}>
-          Export as CSV
+          Export
         </Button>
         <Button
           variant="contained"
@@ -228,6 +276,13 @@ export default function UserTransactions() {
           onClick={() => navigate("reservation")}
         >
           Reserve
+        </Button>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => setShowScanner(!showScanner)}
+        >
+          SCAN
         </Button>
       </Box>
       {rows?.length > 0 ? (

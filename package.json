@@ -19,6 +19,7 @@
     "@mui/material": "^6.4.3",
     "@mui/x-date-pickers": "^7.25.0",
     "@tailwindcss/vite": "^4.0.3",
+    "@yudiel/react-qr-scanner": "^2.2.1",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "firebase": "^11.2.0",
