@@ -89,6 +89,12 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar }) => {
             redirect={() => navigate("appointments")}
           />
           <SidebarItem
+            icon="/images/transactions.png"
+            text="Transactions"
+            isSidebarOpen={isSidebarOpen}
+            redirect={() => navigate("transactions")}
+          />
+          <SidebarItem
             icon="/images/sales.png"
             text="Sales"
             isSidebarOpen={isSidebarOpen}

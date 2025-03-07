@@ -13,6 +13,7 @@ import Customers from "./views/Customers";
 import Services from "./views/Services";
 import Appointments from "./views/Appointments";
 import Sales from "./views/Sales";
+import Transactions from "./views/Transactions";
 
 import User from "../src/layout/User";
 import UserTransactions from "./views/UserTransactions";
@@ -42,6 +43,7 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="sales" element={<Sales />} />
+            <Route path="transactions" element={<Transactions />} />
           </Route>
 
           <Route path="/user" element={<User />}>
