@@ -47,6 +47,21 @@ function Row(props) {
         </TableCell>
         <TableCell align="left">{row.phone}</TableCell>
         <TableCell align="left">{row.address}</TableCell>
+        <TableCell align="left">
+          {row?.referenceNumber ? row.referenceNumber : "N/A"}
+        </TableCell>
+        <TableCell align="left">
+          {row?.proof ? (
+            <img
+              src={row.proof}
+              alt="Proof"
+              className="w-[60px] aspect-square"
+              onClick={() => window.open(row.proof, "_blank")}
+            />
+          ) : (
+            "N/A"
+          )}
+        </TableCell>
         <TableCell align="center" className="flex items-center justify-center">
           <button
             className="bg-red-700 text-white px-4 py-2 rounded-xl cursor-pointer mx-1"
@@ -110,6 +125,8 @@ export default function Reservations() {
   const [orders, setOrders] = useState([]);
 
   const { orders: orderStore } = useContext(DataContext);
+
+  console.log(orderStore);
 
   useEffect(() => {
     if (orderStore?.length < 0) {
@@ -200,6 +217,8 @@ export default function Reservations() {
                 <TableCell>Username</TableCell>
                 <TableCell align="left">Phone</TableCell>
                 <TableCell align="left">Address</TableCell>
+                <TableCell align="left">Reference</TableCell>
+                <TableCell align="left">Proof</TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
