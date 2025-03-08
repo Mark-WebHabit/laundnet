@@ -51,18 +51,10 @@ function Login() {
         return;
       }
 
-      // Save session to localStorage
-      const userSession = {
-        uid: userData.uid,
-        username: userData.username,
-        isAdmin: userData.isAdmin,
-        phone: userData.phone,
-        address: userData.address,
-      };
-      localStorage.setItem("user", JSON.stringify(userSession));
+      localStorage.setItem("user", JSON.stringify(userData));
 
       // Update user state in DataStore
-      setUser(userSession);
+      setUser(userData);
 
       if (userData.isAdmin) {
         navigate("/admin");

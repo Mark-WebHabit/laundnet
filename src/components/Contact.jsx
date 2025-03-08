@@ -11,7 +11,7 @@ function Contact() {
         <Card
           image={"location"}
           title={"Address"}
-          body={"You can find us at @outshop adress 123"}
+          body={"You can find us at Kalawag 2 Isulan Sultan kudarat"}
         />
         <Card
           image={"telephone"}

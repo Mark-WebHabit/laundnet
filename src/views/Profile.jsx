@@ -5,26 +5,36 @@ import {
   FormControlLabel,
   Button,
   Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { DataContext } from "../context/DataStore";
 import { db } from "../../firebase";
 import { get, ref, update } from "firebase/database";
-import bcrypt from "bcryptjs";
 
+const apiKey = import.meta.env.VITE_GMAP;
 function Profile() {
   const [changePassword, setChangePassword] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  const [showMapModal, setShowMapModal] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     address: "",
     phone: "",
+    latitude: "",
+    longitude: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
-
   const { user } = useContext(DataContext);
+  const [tempLocation, setTempLocation] = useState({
+    latitude: "",
+    longitude: "",
+  });
 
   useEffect(() => {
     if (user) {
@@ -35,10 +45,11 @@ function Profile() {
           const userData = snapshot.val();
           setCurrentUser(userData);
           setFormData({
-            ...formData,
             username: userData.username || "",
             address: userData.address || "",
             phone: userData.phone || "",
+            latitude: userData.latitude || "",
+            longitude: userData.longitude || "",
           });
         }
       });
@@ -64,63 +75,61 @@ function Profile() {
         "Phone number must start with 09 and be 11 digits long.";
     }
 
-    // Check if username exists
-    const usersRef = ref(db, "users");
-    const snapshot = await get(usersRef);
-    const users = snapshot.val();
-    const usernameExists = Object.values(users).some(
-      (u) => u.username === formData.username && u.uid !== user.uid
-    );
-
-    if (usernameExists) {
-      formErrors.username = "Username already exists.";
-    }
-
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
   };
 
+  const fetchCoordinates = async () => {
+    const address = formData.address;
+    if (!address) {
+      alert("Please enter an address.");
+      return;
+    }
+
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      address
+    )}&key=${apiKey}`;
+
+    try {
+      const response = await fetch(geocodeUrl);
+      const data = await response.json();
+
+      if (data.status === "OK") {
+        const location = data.results[0].geometry.location;
+        setTempLocation({ latitude: location.lat, longitude: location.lng });
+        setShowMapModal(true);
+      } else {
+        alert("Address not found. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+      alert("Failed to fetch location. Try again later.");
+    }
+  };
+
+  const handleConfirmLocation = () => {
+    setFormData({
+      ...formData,
+      latitude: tempLocation.latitude,
+      longitude: tempLocation.longitude,
+    });
+    setShowMapModal(false);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const isValid = await validateForm();
     if (!isValid) return;
 
-    if (changePassword) {
-      const isMatch = await bcrypt.compare(
-        formData.currentPassword,
-        currentUser.password
-      );
-
-      if (!isMatch) {
-        alert("Current password is incorrect");
-        return;
-      }
-
-      if (formData.newPassword !== formData.confirmPassword) {
-        alert("New passwords do not match");
-        return;
-      }
-
-      const hashedPassword = await bcrypt.hash(formData.newPassword, 10);
-
-      update(ref(db, `users/${user.uid}`), {
-        username: formData.username,
-        address: formData.address,
-        phone: formData.phone,
-        password: hashedPassword,
-      })
-        .then(() => alert("Profile updated successfully"))
-        .catch((error) => alert(error.message));
-    } else {
-      update(ref(db, `users/${user.uid}`), {
-        username: formData.username,
-        address: formData.address,
-        phone: formData.phone,
-      })
-        .then(() => alert("Profile updated successfully"))
-        .catch((error) => alert(error.message));
-    }
+    update(ref(db, `users/${user.uid}`), {
+      username: formData.username,
+      address: formData.address,
+      phone: formData.phone,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+    })
+      .then(() => alert("Profile updated successfully"))
+      .catch((error) => alert(error.message));
   };
 
   return (
@@ -143,8 +152,6 @@ function Profile() {
         name="username"
         value={formData.username}
         onChange={handleInputChange}
-        error={!!errors.username}
-        helperText={errors.username}
       />
       <TextField
         label="Address"
@@ -154,6 +161,9 @@ function Profile() {
         value={formData.address}
         onChange={handleInputChange}
       />
+      <Button variant="contained" color="secondary" onClick={fetchCoordinates}>
+        Validate Address
+      </Button>
       <TextField
         label="Phone"
         variant="outlined"
@@ -161,8 +171,6 @@ function Profile() {
         name="phone"
         value={formData.phone}
         onChange={handleInputChange}
-        error={!!errors.phone}
-        helperText={errors.phone}
       />
 
       <FormControlLabel
@@ -207,6 +215,28 @@ function Profile() {
       <Button variant="contained" color="primary" type="submit">
         Save
       </Button>
+
+      {/* Map Confirmation Modal */}
+      <Dialog open={showMapModal} onClose={() => setShowMapModal(false)}>
+        <DialogTitle>Confirm Address Location</DialogTitle>
+        <DialogContent>
+          <iframe
+            width="100%"
+            height="300"
+            frameBorder="0"
+            src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${tempLocation.latitude},${tempLocation.longitude}`}
+            allowFullScreen
+          ></iframe>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowMapModal(false)} color="secondary">
+            Retry
+          </Button>
+          <Button onClick={handleConfirmLocation} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
