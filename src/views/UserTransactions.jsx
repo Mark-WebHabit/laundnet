@@ -414,6 +414,10 @@ export default function UserTransactions() {
                   <span>Add-ons Cost:</span>
                   <span>₱{showReceipt?.addsOnCost || 0}</span>
                 </p>
+                <p className="flex justify-between font-semibold">
+                  <span>Service Cost:</span>
+                  <span>₱{showReceipt?.weightCost || 0}</span>
+                </p>
 
                 <p className="flex justify-between font-semibold">
                   <span>Amount Presented:</span>
