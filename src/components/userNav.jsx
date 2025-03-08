@@ -6,16 +6,19 @@ function NavBar() {
   const { setUser } = useContext(DataContext);
   const navigate = useNavigate();
   return (
-    <nav className="bg-blue-600 p-4 border my-8 ">
-      <ul className="flex space-x-8">
+    <nav className="bg-blue-600 p-4    my-8 w-full overflow-x-scroll flex items-center">
+      <Link to="/" className="text-white mr-16 md:mr-0">
+        Home
+      </Link>
+      <ul className="flex space-x-8 w-full justify-center">
         <li>
-          <Link to="/" className="text-white">
-            Home
+          <Link to="/user" className="text-white">
+            Laundry
           </Link>
         </li>
         <li>
-          <Link to="/user" className="text-white">
-            Transactions
+          <Link to="appointment" className="text-white">
+            Appointment
           </Link>
         </li>
         <li>

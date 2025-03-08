@@ -14,12 +14,14 @@ import Services from "./views/Services";
 import Appointments from "./views/Appointments";
 import Sales from "./views/Sales";
 import Transactions from "./views/Transactions";
+import Appointment from "./views/Appointment";
 
 import User from "../src/layout/User";
 import UserTransactions from "./views/UserTransactions";
 import Book from "./views/Book";
 import Prices from "./views/Prices";
 import Profile from "./views/Profile";
+import UserAppointment from "./views/UserAppointment";
 
 import Status from "./views/Status";
 
@@ -41,15 +43,17 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="customers" element={<Customers />} />
             <Route path="services" element={<Services />} />
-            <Route path="appointments" element={<Appointments />} />
+            <Route path="laundry" element={<Appointments />} />
             <Route path="sales" element={<Sales />} />
             <Route path="transactions" element={<Transactions />} />
+            <Route path="appointments" element={<Appointment />} />
           </Route>
 
           <Route path="/user" element={<User />}>
             <Route index element={<UserTransactions />} />
             <Route path="reservation" element={<Book />} />
             <Route path="prices" element={<Prices />} />
+            <Route path="appointment" element={<UserAppointment />} />
             <Route path="profile" element={<Profile />} />
           </Route>
 

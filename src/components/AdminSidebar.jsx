@@ -83,7 +83,13 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar }) => {
             redirect={() => navigate("services")}
           />
           <SidebarItem
-            icon="/images/appointment.png"
+            icon="/images/laundry.png"
+            text="Laundry"
+            isSidebarOpen={isSidebarOpen}
+            redirect={() => navigate("laundry")}
+          />
+          <SidebarItem
+            icon="/images/appointments.png"
             text="Appointment"
             isSidebarOpen={isSidebarOpen}
             redirect={() => navigate("appointments")}

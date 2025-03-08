@@ -51,6 +51,7 @@ function DataStore({ children }) {
   const [servicesFetched, setServicesFetched] = useState(false);
   const [customersFetched, setCustomersFetched] = useState(false);
   const [orderHistory, setOrderHistory] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [logistics, setLogistics] = useState([]);
   const [user, setUser] = useState(false);
   const [weekly, setWeekly] = useState([]);
@@ -62,7 +63,7 @@ function DataStore({ children }) {
   const ordersRef = ref(db, "orders");
   const logisticsRef = ref(db, "logistics");
   const serviceFeeRef = ref(db, "serviceFee");
-
+  const appointmentsRef = ref(db, "appointments");
   useEffect(() => {
     // Retrieve user from localStorage
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -96,6 +97,14 @@ function DataStore({ children }) {
 
       setLogistics(servicesArray);
     });
+    const unsubscribeAppointments = onValue(appointmentsRef, (snapshot) => {
+      const data = snapshot.val();
+      const appointmentsArray = data
+        ? Object.keys(data).map((uid) => ({ uid, ...data[uid] }))
+        : [];
+
+      setAppointments(appointmentsArray);
+    });
 
     const unsubscribeCustomers = onValue(customersRef, (snapshot) => {
       const data = snapshot.val();
@@ -115,6 +124,7 @@ function DataStore({ children }) {
       unsubscribeCustomers();
       unsubscribeLogistics();
       unsubscribeServiceFee();
+      unsubscribeAppointments();
     };
   }, []);
 
@@ -235,6 +245,7 @@ function DataStore({ children }) {
         weightPrice,
         status,
         setWeightPrice,
+        appointments,
       }}
     >
       {children}
