@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "../context/DataStore";
 import { ref, push, remove } from "firebase/database";
 import { db } from "../../firebase";
@@ -29,7 +29,19 @@ function UserAppointment() {
     time: "",
     purpose: "",
   });
-  const { appointments, user } = useContext(DataContext);
+  const [appointments, setAppointments] = useState([]);
+  const { appointments: apptmnts, user } = useContext(DataContext);
+
+  useEffect(() => {
+    if (!user || !user?.uid) {
+      setAppointments([]);
+      return;
+    }
+
+    const myAppointments = apptmnts.filter((apt) => apt.userId === user.uid);
+
+    setAppointments(myAppointments);
+  }, [apptmnts]);
 
   const handleInputChange = (e) => {
     setNewAppointment({ ...newAppointment, [e.target.name]: e.target.value });
@@ -195,7 +207,7 @@ function UserAppointment() {
               <option value="">Select Hour</option>
               {[...Array(24)].map((_, index) => {
                 const disbaled = isTimeTaken(
-                  appointments,
+                  apptmnts,
                   newAppointment.date,
                   index
                 );

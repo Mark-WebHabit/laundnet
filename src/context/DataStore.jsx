@@ -97,13 +97,34 @@ function DataStore({ children }) {
 
       setLogistics(servicesArray);
     });
+
     const unsubscribeAppointments = onValue(appointmentsRef, (snapshot) => {
       const data = snapshot.val();
-      const appointmentsArray = data
-        ? Object.keys(data).map((uid) => ({ uid, ...data[uid] }))
-        : [];
+      if (!data) {
+        setAppointments([]);
+        return;
+      }
 
-      setAppointments(appointmentsArray);
+      // Fetch users
+      onValue(customersRef, (usersSnapshot) => {
+        const usersData = usersSnapshot.val() || {};
+
+        const appointmentsArray = Object.keys(data).map((uid) => {
+          const appointment = data[uid];
+          const user = usersData[appointment.userId] || {}; // Get user details
+
+          return {
+            uid,
+            ...appointment,
+            username: user.username || "Unknown",
+            phone: user.phone || "N/A",
+          };
+        });
+
+        console.log(appointmentsArray);
+
+        setAppointments(appointmentsArray);
+      });
     });
 
     const unsubscribeCustomers = onValue(customersRef, (snapshot) => {
