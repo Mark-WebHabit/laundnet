@@ -200,169 +200,174 @@ function Book() {
   };
 
   return (
-    <div className="fixed w-screen h-screen top-0 left-0 bg-black/30 z-20 grid place-items-center">
-      <div className="w-full max-w-[600px] bg-white rounded-[10px] p-4">
-        <h2 className="font-bold text-center uppercase text-2xl mb-4">
-          Reservation Form
-        </h2>
+    <>
+      <div className="flex-1"></div>
+      <div className="fixed w-screen h-screen top-0 left-0 bg-black/30 z-20 grid place-items-center">
+        <div className="w-full max-w-[600px] bg-white rounded-[10px] p-4">
+          <h2 className="font-bold text-center uppercase text-2xl mb-4">
+            Reservation Form
+          </h2>
 
-        <div className="w-full">
-          <div className="my-2">
-            <TextField
-              label={`Weight (₱${weightPrice}/KG)`}
-              variant="outlined"
-              type="number"
-              value={weight}
-              onChange={(e) => {
-                const val = parseFloat(e.target.value);
-                if (val > 0) {
-                  setWeight(val);
-                }
-              }}
-              className="bg-white w-full"
-            />
-          </div>
-          <div className=" grid place-items-center my-2">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                selected={dt}
-                onChange={(date) => setDt(date)}
-                showTimeSelect
-                minDate={new Date()}
-                timeIntervals={60}
-                timeCaption="Time"
-                dateFormat="MMMM d, yyyy h:mm aa"
-                filterTime={filterTime}
-                inline
-              />
-            </LocalizationProvider>
-          </div>
-
-          <p className="mt-4 text-center font-bold">Additionals</p>
-          {services && services?.length > 0
-            ? services.map((add) => (
-                <FormControlLabel
-                  key={add.uid}
-                  control={
-                    <Checkbox
-                      checked={addsOn.includes(add)}
-                      onChange={() => {
-                        if (!addsOn.includes(add)) {
-                          setAddsOn((prev) => [...prev, add]);
-                        } else {
-                          const newadd = addsOn.filter((el) => el !== add);
-                          setAddsOn(newadd);
-                        }
-                      }}
-                      name={add.name}
-                      color="primary"
-                    />
+          <div className="w-full">
+            <div className="my-2">
+              <TextField
+                label={`Weight (₱${weightPrice}/KG)`}
+                variant="outlined"
+                type="number"
+                value={weight}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  if (val > 0) {
+                    setWeight(val);
                   }
-                  label={add.name}
+                }}
+                className="bg-white w-full"
+              />
+            </div>
+            <div className=" grid place-items-center my-2">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  selected={dt}
+                  onChange={(date) => setDt(date)}
+                  showTimeSelect
+                  minDate={new Date()}
+                  timeIntervals={60}
+                  timeCaption="Time"
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  filterTime={filterTime}
+                  inline
                 />
-              ))
-            : null}
-        </div>
+              </LocalizationProvider>
+            </div>
 
-        <div className="flex justify-between items-center my-4">
-          <p>Additional Total: {addsOnTotal}</p>
-          <p>Base Fee: {weightFee}</p>
-          <p>Overall Total: {weightFee + addsOnTotal}</p>
-        </div>
-        <div className="flex items-center justify-center gap-4 mt-4">
-          <button
-            className="px-4 py-2 bg-blue-600 rounded-xl text-white font-bold"
-            onClick={handlePay}
-          >
-            PAY
-          </button>
-          <button
-            className="px-4 py-2 bg-red-600 rounded-xl text-white font-bold"
-            onClick={() => {
-              navigate("/user");
-            }}
-          >
-            CANCEL
-          </button>
-          <Modal
-            open={isPay}
-            onClose={() => setIsPay(false)}
-            BackdropComponent={Backdrop} // ✅ Correct
-            BackdropProps={{
-              timeout: 500,
-            }}
-          >
-            <Fade in={isPay}>
-              <div className="p-6 rounded-lg scale-z-100 w-screen h-screen grid place-items-center">
-                <div className="w-full max-w-[500px] min-w-[250px] py-8 px-4 bg-white rounded-2xl shadow-lg">
-                  <img
-                    src="/images/qr.jpg"
-                    alt="QR"
-                    className="w-[300px] aspect-square  mx-auto border mb-4"
+            <p className="mt-4 text-center font-bold">Additionals</p>
+            {services && services?.length > 0
+              ? services.map((add) => (
+                  <FormControlLabel
+                    key={add.uid}
+                    control={
+                      <Checkbox
+                        checked={addsOn.includes(add)}
+                        onChange={() => {
+                          if (!addsOn.includes(add)) {
+                            setAddsOn((prev) => [...prev, add]);
+                          } else {
+                            const newadd = addsOn.filter((el) => el !== add);
+                            setAddsOn(newadd);
+                          }
+                        }}
+                        name={add.name}
+                        color="primary"
+                      />
+                    }
+                    label={add.name}
                   />
-                  <h2 className="text-xl font-semibold mb-4">
-                    Payment Details
-                  </h2>
+                ))
+              : null}
+          </div>
 
-                  {/* Reference Number */}
-                  <label className="block mb-2">Reference Number</label>
-                  <input
-                    type="text"
-                    value={referenceNumber}
-                    onChange={(e) => setReferenceNumber(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                  />
+          <div className="flex justify-between items-center my-4">
+            <p>Additional Total: {addsOnTotal}</p>
+            <p>Base Fee: {weightFee}</p>
+            <p>Overall Total: {weightFee + addsOnTotal}</p>
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <button
+              className="px-4 py-2 bg-blue-600 rounded-xl text-white font-bold"
+              onClick={handlePay}
+            >
+              PAY
+            </button>
+            <button
+              className="px-4 py-2 bg-red-600 rounded-xl text-white font-bold"
+              onClick={() => {
+                navigate("/user");
+              }}
+            >
+              CANCEL
+            </button>
+            <Modal
+              open={isPay}
+              onClose={() => setIsPay(false)}
+              BackdropComponent={Backdrop} // ✅ Correct
+              BackdropProps={{
+                timeout: 500,
+              }}
+            >
+              <Fade in={isPay}>
+                <div className="p-6 rounded-lg scale-z-100 w-screen h-screen grid place-items-center">
+                  <div className="w-full max-w-[500px] min-w-[250px] py-8 px-4 bg-white rounded-2xl shadow-lg">
+                    <img
+                      src="/images/qr.jpg"
+                      alt="QR"
+                      className="w-[300px] aspect-square  mx-auto border mb-4"
+                    />
+                    <h2 className="text-xl font-semibold mb-4">
+                      Payment Details
+                    </h2>
 
-                  {/* Amount */}
-                  <label className="block mb-2">Amount</label>
-                  <input
-                    type="number"
-                    value={amount}
-                    minLength={4}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                  />
+                    {/* Reference Number */}
+                    <label className="block mb-2">Reference Number</label>
+                    <input
+                      type="text"
+                      value={referenceNumber}
+                      onChange={(e) => setReferenceNumber(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded mb-4"
+                    />
 
-                  {/* File Upload */}
-                  <label className="block mb-2">Upload Proof (JPG only)</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      handleFileChange(e);
-                    }}
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                  />
+                    {/* Amount */}
+                    <label className="block mb-2">Amount</label>
+                    <input
+                      type="number"
+                      value={amount}
+                      minLength={4}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded mb-4"
+                    />
 
-                  {/* Buttons */}
-                  <div className="flex justify-between">
-                    <button
-                      onClick={() => setIsPay(false)}
-                      className="px-4 py-2 bg-red-500 text-white rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSubmit}
-                      disabled={!referenceNumber || !amount || !file}
-                      className={`px-4 py-2 rounded text-white ${
-                        referenceNumber && amount && file
-                          ? "bg-blue-500"
-                          : "bg-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      Submit Payment
-                    </button>
+                    {/* File Upload */}
+                    <label className="block mb-2">
+                      Upload Proof (JPG only)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        handleFileChange(e);
+                      }}
+                      className="w-full p-2 border border-gray-300 rounded mb-4"
+                    />
+
+                    {/* Buttons */}
+                    <div className="flex justify-between">
+                      <button
+                        onClick={() => setIsPay(false)}
+                        className="px-4 py-2 bg-red-500 text-white rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSubmit}
+                        disabled={!referenceNumber || !amount || !file}
+                        className={`px-4 py-2 rounded text-white ${
+                          referenceNumber && amount && file
+                            ? "bg-blue-500"
+                            : "bg-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        Submit Payment
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Fade>
-          </Modal>
+              </Fade>
+            </Modal>
+          </div>
         </div>
-      </div>
 
-      {/* for payment */}
-    </div>
+        {/* for payment */}
+      </div>
+    </>
   );
 }
 

@@ -66,7 +66,7 @@ function Row(props) {
           <Select value={status} onChange={(e) => handleChange(e, row.uid)}>
             {INPROCESS_STATUS.map((stat, i) => (
               <MenuItem key={i} value={stat}>
-                {stat.name}
+                {stat.name === "For Pick Up" ? "For Claim" : stat.name}
               </MenuItem>
             ))}
           </Select>
