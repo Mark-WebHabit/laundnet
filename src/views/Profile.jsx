@@ -18,23 +18,16 @@ const apiKey = import.meta.env.VITE_GMAP;
 function Profile() {
   const [changePassword, setChangePassword] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
-  const [showMapModal, setShowMapModal] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     address: "",
     phone: "",
-    latitude: "",
-    longitude: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
   const { user } = useContext(DataContext);
-  const [tempLocation, setTempLocation] = useState({
-    latitude: "",
-    longitude: "",
-  });
 
   useEffect(() => {
     if (user) {
@@ -48,8 +41,6 @@ function Profile() {
             username: userData.username || "",
             address: userData.address || "",
             phone: userData.phone || "",
-            latitude: userData.latitude || "",
-            longitude: userData.longitude || "",
           });
         }
       });
@@ -79,39 +70,9 @@ function Profile() {
     return Object.keys(formErrors).length === 0;
   };
 
-  const fetchCoordinates = async () => {
-    const address = formData.address;
-    if (!address) {
-      alert("Please enter an address.");
-      return;
-    }
-
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-      address
-    )}&key=${apiKey}`;
-
-    try {
-      const response = await fetch(geocodeUrl);
-      const data = await response.json();
-
-      if (data.status === "OK") {
-        const location = data.results[0].geometry.location;
-        setTempLocation({ latitude: location.lat, longitude: location.lng });
-        setShowMapModal(true);
-      } else {
-        alert("Address not found. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error fetching coordinates:", error);
-      alert("Failed to fetch location. Try again later.");
-    }
-  };
-
   const handleConfirmLocation = () => {
     setFormData({
       ...formData,
-      latitude: tempLocation.latitude,
-      longitude: tempLocation.longitude,
     });
     setShowMapModal(false);
   };
@@ -125,8 +86,6 @@ function Profile() {
       username: formData.username,
       address: formData.address,
       phone: formData.phone,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
     })
       .then(() => alert("Profile updated successfully"))
       .catch((error) => alert(error.message));
@@ -161,9 +120,7 @@ function Profile() {
         value={formData.address}
         onChange={handleInputChange}
       />
-      <Button variant="contained" color="secondary" onClick={fetchCoordinates}>
-        Validate Address
-      </Button>
+
       <TextField
         label="Phone"
         variant="outlined"
@@ -215,28 +172,6 @@ function Profile() {
       <Button variant="contained" color="primary" type="submit">
         Save
       </Button>
-
-      {/* Map Confirmation Modal */}
-      <Dialog open={showMapModal} onClose={() => setShowMapModal(false)}>
-        <DialogTitle>Confirm Address Location</DialogTitle>
-        <DialogContent>
-          <iframe
-            width="100%"
-            height="300"
-            frameBorder="0"
-            src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${tempLocation.latitude},${tempLocation.longitude}`}
-            allowFullScreen
-          ></iframe>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowMapModal(false)} color="secondary">
-            Retry
-          </Button>
-          <Button onClick={handleConfirmLocation} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }
